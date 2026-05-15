@@ -4,6 +4,7 @@ import axios from "axios";
 import Signup from "./auth/Signup";
 import Home from "./Home/Home";
 import { isUserLogged } from "./services/auth.service";
+import Signin from "./auth/Signin";
 
 axios.defaults.baseURL = import.meta.env.VITE_SERVER_URL;
 axios.defaults.withCredentials = true;
@@ -42,6 +43,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/signup" element={<Signup />} />
+        <Route path="/signin" element={<Signin />} />
       </Routes>
     </>
   );
