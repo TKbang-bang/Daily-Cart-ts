@@ -26,3 +26,23 @@ export const signupService = async (
 
   return user.rows[0];
 };
+
+export const signinService = async (email: string, password: string) => {
+  // vcerify if the email is in db
+  const { rows: userByEmail } = await db.query(
+    "SELECT * FROM users WHERE email = $1",
+    [email],
+  );
+  if (userByEmail.length === 0)
+    throw new ServerError("User not found", "email", 404);
+
+  // verifying the password
+  const isPasswordValid = await bcrypt.compare(
+    password,
+    userByEmail[0].password,
+  );
+  if (!isPasswordValid)
+    throw new ServerError("Incorrect password", "password", 400);
+
+  return userByEmail[0];
+};

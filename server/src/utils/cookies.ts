@@ -16,9 +16,9 @@ export const sendingCookieToken = (
 ) => {
   return res
     .cookie("refreshToken", refreshToken, cookieOptions)
-    .status(200)
+    .status(201)
     .json({
       success: true,
-      data: { accessToken, message: "Account created successfully" },
+      data: { accessToken, message: "Session created successfully" },
     });
 };

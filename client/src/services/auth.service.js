@@ -1,5 +1,9 @@
 import axios from "axios";
-import { getAccessToken, setAccessToken } from "./token.service";
+import {
+  getAccessToken,
+  removeAccessToken,
+  setAccessToken,
+} from "./token.service";
 
 export const signupService = async (firstname, lastname, email, password) => {
   try {
@@ -10,7 +14,7 @@ export const signupService = async (firstname, lastname, email, password) => {
       password,
     });
 
-    if (response.status !== 200)
+    if (response.status !== 201)
       return {
         success: false,
         message: response.data?.error?.message,
@@ -19,7 +23,29 @@ export const signupService = async (firstname, lastname, email, password) => {
     const accessToken = response.data.data.accessToken.split(" ")[1];
     setAccessToken(accessToken);
 
-    console.log(accessToken);
+    return { success: true, message: response.data?.data?.message };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.error?.message || "Something went wrong",
+    };
+  }
+};
+
+export const signinService = async (email, password) => {
+  try {
+    const response = await axios.post("/auth/signin", {
+      email,
+      password,
+    });
+    if (response.status !== 201)
+      return {
+        success: false,
+        message: response.data?.error?.message,
+      };
+
+    const accessToken = response.data.data.accessToken.split(" ")[1];
+    setAccessToken(accessToken);
 
     return { success: true, message: response.data?.data?.message };
   } catch (error) {
@@ -46,6 +72,28 @@ export const isUserLogged = async () => {
       success: true,
       message: response.data?.data?.message,
     };
+  } catch (error) {
+    return {
+      success: false,
+      message: error.response?.data?.error?.message || "Something went wrong",
+    };
+  }
+};
+
+export const logoutService = async () => {
+  try {
+    const response = await axios.delete("/auth/logout", {
+      headers: {
+        Authorization: `Bearer ${getAccessToken()}`,
+      },
+    });
+    if (response.status !== 201)
+      return { success: false, message: response.data?.error?.message };
+
+    setAccessToken(null);
+    removeAccessToken();
+
+    return { success: true, message: "Logout successful" };
   } catch (error) {
     return {
       success: false,
